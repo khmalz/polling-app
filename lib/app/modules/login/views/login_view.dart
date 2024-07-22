@@ -26,7 +26,7 @@ class LoginView extends GetView<LoginController> {
           Expanded(
             child: Container(
               padding: const EdgeInsets.only(
-                  bottom: 15, right: 20, left: 20, top: 30),
+                  bottom: 15, right: 20, left: 20, top: 20),
               alignment: Alignment.center,
               width: double.infinity,
               decoration: const BoxDecoration(
@@ -48,42 +48,44 @@ class LoginView extends GetView<LoginController> {
                   const SizedBox(
                     height: 10,
                   ),
-                  Material(
-                    elevation: 5,
-                    shadowColor: textPrimary,
-                    borderRadius: BorderRadius.circular(15),
-                    child: TextField(
-                      // controller: controller.emailLoginInput,
-                      textInputAction: TextInputAction.next,
-                      decoration: InputDecoration(
-                        contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 20),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15),
-                          borderSide: BorderSide.none,
+                  Obx(
+                    () => Material(
+                      elevation: 5,
+                      shadowColor: textPrimary,
+                      borderRadius: BorderRadius.circular(15),
+                      child: TextField(
+                        controller: controller.email,
+                        textInputAction: TextInputAction.next,
+                        decoration: InputDecoration(
+                          contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 20),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(15),
+                            borderSide: BorderSide.none,
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(15),
+                            borderSide: BorderSide.none,
+                          ),
+                          filled: true,
+                          fillColor: textSecondary,
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(15),
+                            borderSide: BorderSide.none,
+                          ),
+                          labelText: 'Email',
+                          labelStyle: TextStyle(
+                            color: controller.errorEmail.value == null
+                                ? Colors.grey.shade600
+                                : Colors.red,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          errorText: controller.errorEmail.value,
                         ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15),
-                          borderSide: BorderSide.none,
-                        ),
-                        filled: true,
-                        fillColor: textSecondary,
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15),
-                          borderSide: BorderSide.none,
-                        ),
-                        labelText: 'Email',
-                        labelStyle: const TextStyle(
-                          // color: controller.errorLoginEmail.value == null
-                          //     ? Colors.grey.shade600
-                          //     : Colors.red,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500,
-                        ),
-                        // errorText: controller.errorLoginEmail.value,
+                        keyboardType: TextInputType.emailAddress,
+                        onChanged: (value) => controller.validateEmail(),
                       ),
-                      keyboardType: TextInputType.emailAddress,
-                      // onChanged: (value) => controller.validateLoginEmail(),
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -94,7 +96,7 @@ class LoginView extends GetView<LoginController> {
                       borderRadius: BorderRadius.circular(15),
                       child: TextField(
                         obscureText: controller.isHidePassword.value,
-                        // controller: controller.passwordLoginInput,
+                        controller: controller.password,
                         textInputAction: TextInputAction.done,
                         decoration: InputDecoration(
                           suffixIcon: controller.isHidePassword.value
@@ -125,24 +127,26 @@ class LoginView extends GetView<LoginController> {
                             borderSide: BorderSide.none,
                           ),
                           labelText: 'Password',
-                          labelStyle: const TextStyle(
-                            // color: controller.errorLoginPassword.value == null
-                            //     ? Colors.grey.shade600
-                            //     : Colors.red,
+                          labelStyle: TextStyle(
+                            color: controller.errorPassword.value == null
+                                ? Colors.grey.shade600
+                                : Colors.red,
                             fontSize: 18,
                             fontWeight: FontWeight.w500,
                           ),
-                          // errorText: controller.errorLoginPassword.value,
+                          errorText: controller.errorPassword.value,
                         ),
                         keyboardType: TextInputType.name,
-                        // onChanged: (value) => controller.validateLoginPassword(),
+                        onChanged: (value) => controller.validatePassword(),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 20),
                   Obx(
                     () => ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        controller.signIn();
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: primary,
                         minimumSize: const Size(150, 55),
