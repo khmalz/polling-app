@@ -34,7 +34,14 @@ class LoginController extends GetxController {
   }
 
   Future<void> signIn() async {
+    bool isValid = true;
+    isValid &= validateEmail();
+    isValid &= validatePassword();
+
     String? errorMessage;
+
+    if (!isValid) return;
+    isLoading.value = true;
 
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
@@ -43,13 +50,20 @@ class LoginController extends GetxController {
       );
     } on FirebaseAuthException catch (error) {
       errorMessage = error.code;
+      debugPrint(error.code);
 
       switch (error.code) {
+        case "invalid-email":
+          errorMessage = "Invalid email. Please check and try again.";
+          break;
         case "invalid-credential":
           errorMessage = "Invalid credential. Please check and try again.";
           break;
         case "too-many-requests":
           errorMessage = "Too many requests. Try again later.";
+          break;
+        case "user-disabled":
+          errorMessage = "User is disabled. Please using another account.";
           break;
         case "operation-not-allowed":
           errorMessage = "Signing in with Email and Password is not enabled.";
@@ -62,5 +76,7 @@ class LoginController extends GetxController {
     if (errorMessage != null) {
       snackbarNotification(message: errorMessage);
     }
+
+    isLoading.value = false;
   }
 }
