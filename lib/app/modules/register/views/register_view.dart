@@ -59,6 +59,47 @@ class RegisterView extends GetView<RegisterController> {
                           shadowColor: textPrimary,
                           borderRadius: BorderRadius.circular(15),
                           child: TextField(
+                            controller: controller.username,
+                            textInputAction: TextInputAction.next,
+                            decoration: InputDecoration(
+                              contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 20),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15),
+                                borderSide: BorderSide.none,
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15),
+                                borderSide: BorderSide.none,
+                              ),
+                              filled: true,
+                              fillColor: textSecondary,
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15),
+                                borderSide: BorderSide.none,
+                              ),
+                              labelText: 'Username',
+                              labelStyle: TextStyle(
+                                color: controller.errorUsername.value == null
+                                    ? Colors.grey.shade600
+                                    : Colors.red,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              errorText: controller.errorUsername.value,
+                            ),
+                            keyboardType: TextInputType.name,
+                            onChanged: (value) => controller.validateUsername(),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      Obx(
+                        () => Material(
+                          elevation: 5,
+                          shadowColor: textPrimary,
+                          borderRadius: BorderRadius.circular(15),
+                          child: TextField(
                             controller: controller.email,
                             textInputAction: TextInputAction.next,
                             decoration: InputDecoration(
