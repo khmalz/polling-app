@@ -12,6 +12,7 @@ dependencies:
   cloud_firestore: 5.1.0
   firebase_auth: 5.1.2
   salomon_bottom_bar: 3.3.2
+  get_storage: 2.1.1
   flutter: 
     sdk: flutter
 
