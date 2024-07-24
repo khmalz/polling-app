@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:polling_app/app/data/helper/snackbar_notification.dart';
 import 'package:polling_app/app/data/helper/validate_string.dart';
-import 'package:polling_app/app/routes/app_pages.dart';
 
 class RegisterController extends GetxController {
   RxBool isHidePassword = true.obs;

@@ -9,6 +9,7 @@ abstract class Routes {
   static const SPLASH = _Paths.SPLASH;
   static const TIMELINE = _Paths.TIMELINE;
   static const PROFILE = _Paths.PROFILE;
+  static const POST = _Paths.POST;
 }
 
 abstract class _Paths {
@@ -19,4 +20,5 @@ abstract class _Paths {
   static const SPLASH = '/splash';
   static const TIMELINE = '/timeline';
   static const PROFILE = '/profile';
+  static const POST = '/post';
 }

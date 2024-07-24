@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
+import 'package:polling_app/app/modules/post/views/post_view.dart';
 import 'package:polling_app/app/modules/profile/views/profile_view.dart';
 import 'package:polling_app/app/modules/timeline/views/timeline_view.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
@@ -18,7 +19,7 @@ class HomeView extends GetView<HomeController> {
           case 0:
             return const TimelineView();
           case 1:
-            return const TimelineView();
+            return const PostView();
           case 2:
             return const ProfileView();
           default:
@@ -39,10 +40,13 @@ class HomeView extends GetView<HomeController> {
               selectedColor: Colors.purple,
             ),
 
-            /// Likes
+            /// Create Post
             SalomonBottomBarItem(
-              icon: const Icon(Icons.favorite),
-              title: const Text("Likes"),
+              icon: const Icon(
+                Icons.add_box_outlined,
+                size: 30,
+              ),
+              title: const Text("Add Post"),
               selectedColor: Colors.pink,
             ),
 
