@@ -25,7 +25,7 @@ class ProfileView extends GetView<ProfileController> {
 
           if (snapshot.hasData) {
             User? user = snapshot.data;
-            controller.fetchUserData(user!.uid);
+            controller.fetchUserData(user!);
 
             return Obx(() {
               if (controller.authData.value.id == null) {
@@ -43,7 +43,7 @@ class ProfileView extends GetView<ProfileController> {
                             onTap: () => Get.to(() => const ProfileEditView()),
                             title: Obx(
                               () => Text(
-                                controller.authData.value.username ?? "Guest",
+                                controller.authData.value.name ?? "Guest",
                                 style: const TextStyle(
                                   fontWeight: FontWeight.w500,
                                   fontSize: 18,

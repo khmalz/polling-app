@@ -59,7 +59,7 @@ class RegisterView extends GetView<RegisterController> {
                           shadowColor: textPrimary,
                           borderRadius: BorderRadius.circular(15),
                           child: TextField(
-                            controller: controller.username,
+                            controller: controller.name,
                             textInputAction: TextInputAction.next,
                             decoration: InputDecoration(
                               contentPadding: const EdgeInsets.symmetric(
@@ -78,18 +78,18 @@ class RegisterView extends GetView<RegisterController> {
                                 borderRadius: BorderRadius.circular(15),
                                 borderSide: BorderSide.none,
                               ),
-                              labelText: 'Username',
+                              labelText: 'Name',
                               labelStyle: TextStyle(
-                                color: controller.errorUsername.value == null
+                                color: controller.errorName.value == null
                                     ? Colors.grey.shade600
                                     : Colors.red,
                                 fontSize: 18,
                                 fontWeight: FontWeight.w500,
                               ),
-                              errorText: controller.errorUsername.value,
+                              errorText: controller.errorName.value,
                             ),
                             keyboardType: TextInputType.name,
-                            onChanged: (value) => controller.validateUsername(),
+                            onChanged: (value) => controller.validateName(),
                           ),
                         ),
                       ),

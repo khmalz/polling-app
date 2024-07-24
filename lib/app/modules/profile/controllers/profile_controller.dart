@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -6,32 +5,18 @@ import 'package:polling_app/app/data/helper/snackbar_notification.dart';
 import 'package:polling_app/app/data/helper/validate_string.dart';
 import 'package:polling_app/app/data/models/user_model.dart' as model;
 import 'package:polling_app/app/modules/home/controllers/home_controller.dart';
-import 'package:polling_app/app/modules/home/views/home_view.dart';
 import 'package:polling_app/app/routes/app_pages.dart';
 
 class ProfileController extends GetxController {
-  Rx<model.User> authData = model.User().obs;
   RxBool isClickLogout = false.obs;
+  Rx<model.User> authData = model.User().obs;
 
-  Future<void> fetchUserData(String uid) async {
-    try {
-      DocumentSnapshot documentSnapshot =
-          await FirebaseFirestore.instance.collection('users').doc(uid).get();
-
-      if (documentSnapshot.exists) {
-        Map<String, dynamic> userData =
-            documentSnapshot.data()! as Map<String, dynamic>;
-        userData['id'] = uid;
-
-        model.User userM = model.User.fromJson(userData);
-
-        authData.value = userM;
-      } else {
-        throw Exception('User not found');
-      }
-    } catch (error) {
-      throw Exception('Error fetching user data: $error');
-    }
+  void fetchUserData(User firebaseUser) {
+    authData.value = model.User(
+      id: firebaseUser.uid,
+      name: firebaseUser.displayName,
+      email: firebaseUser.email,
+    );
   }
 
   void logout() async {
@@ -40,20 +25,57 @@ class ProfileController extends GetxController {
   }
 
   RxBool isLoading = false.obs;
-  late TextEditingController usernameInput =
-      TextEditingController(text: authData.value.username);
-  Rxn<String> errorUsername = Rxn<String>(null);
+  late TextEditingController nameInput =
+      TextEditingController(text: authData.value.name);
+  Rxn<String> errorName = Rxn<String>(null);
 
-  bool validateUsername() {
+  bool validateName() {
     return validateString(
-      text: usernameInput.text.trim(),
+      text: nameInput.text.trim(),
       minLength: 3,
-      maxLength: 10,
-      errorMessage: errorUsername,
-      emptyMessage: 'Username cannot be empty',
-      minLengthMessage: 'Username must be at least 3 characters',
-      maxLengthMessage: 'Username must be at most 10 characters',
+      maxLength: 100,
+      errorMessage: errorName,
+      emptyMessage: 'Name cannot be empty',
+      minLengthMessage: 'Name must be at least 3 characters',
+      maxLengthMessage: 'Name must be at most 100 characters',
     );
+  }
+
+  Future<void> changeProfile() async {
+    String name = nameInput.text.trim();
+
+    User? user = FirebaseAuth.instance.currentUser;
+
+    if (user != null) {
+      isLoading.value = true;
+      try {
+        await user.updateDisplayName(name);
+        await user.reload();
+        User? updatedUser = FirebaseAuth.instance.currentUser;
+
+        authData.value = model.User(
+          id: updatedUser?.uid,
+          name: updatedUser?.displayName,
+          email: updatedUser?.email,
+        );
+
+        snackbarNotification(
+          message: "Profile updated successfully",
+          backgroundColor: Colors.green,
+          duration: const Duration(seconds: 1, milliseconds: 500),
+        );
+      } on FirebaseAuthException catch (e) {
+        snackbarNotification(
+          message: e.message ?? 'An error occurred, please try again',
+          backgroundColor: Colors.red,
+          duration: const Duration(seconds: 1, milliseconds: 500),
+        );
+      } finally {
+        isLoading.value = false;
+
+        Get.put(HomeController());
+      }
+    }
   }
 
   late TextEditingController passwordOldInput = TextEditingController();
@@ -124,12 +146,14 @@ class ProfileController extends GetxController {
       );
     } finally {
       isLoading.value = false;
+
+      Get.put(HomeController());
     }
   }
 
   void clearInput() {
-    usernameInput.clear();
-    errorUsername.value = null;
+    nameInput.clear();
+    errorName.value = null;
 
     passwordOldInput.clear();
     passwordNewInput.clear();

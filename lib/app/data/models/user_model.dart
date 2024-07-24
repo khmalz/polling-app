@@ -1,40 +1,40 @@
 class User {
   String? id;
-  String? username;
+  String? name;
   String? email;
 
   User({
     this.id,
-    this.username,
+    this.name,
     this.email,
   });
 
   User.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    username = json['username'];
+    name = json['name'];
     email = json['email'];
   }
 
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{};
     data['id'] = id;
-    data['username'] = username;
+    data['name'] = name;
     data['email'] = email;
     return data;
   }
 
   Map<String, dynamic> toMap() {
-    return <String, dynamic>{'id': id, 'username': username, 'email': email};
+    return <String, dynamic>{'id': id, 'name': name, 'email': email};
   }
 
   factory User.fromMap(Map<String, dynamic> map) {
     return User(
       id: map['id'] != null ? map['id'] as String : null,
-      username: map['username'] != null ? map['username'] as String : null,
+      name: map['name'] != null ? map['name'] as String : null,
       email: map['email'] != null ? map['email'] as String : null,
     );
   }
 
   @override
-  String toString() => 'User(id: $id, username: $username, email: $email)';
+  String toString() => 'User(id: $id, name: $name, email: $email)';
 }

@@ -27,8 +27,8 @@ class ProfileEditView extends GetView<ProfileController> {
                   shadowColor: textPrimary,
                   borderRadius: BorderRadius.circular(15),
                   child: TextField(
-                    controller: controller.usernameInput,
-                    textInputAction: TextInputAction.next,
+                    controller: controller.nameInput,
+                    textInputAction: TextInputAction.done,
                     decoration: InputDecoration(
                       contentPadding: const EdgeInsets.symmetric(
                           horizontal: 20, vertical: 20),
@@ -46,18 +46,18 @@ class ProfileEditView extends GetView<ProfileController> {
                         borderRadius: BorderRadius.circular(15),
                         borderSide: BorderSide.none,
                       ),
-                      labelText: 'Username',
+                      labelText: 'Name',
                       labelStyle: TextStyle(
-                        color: controller.errorUsername.value == null
+                        color: controller.errorName.value == null
                             ? Colors.grey.shade600
                             : Colors.red,
                         fontSize: 18,
                         fontWeight: FontWeight.w500,
                       ),
-                      errorText: controller.errorUsername.value,
+                      errorText: controller.errorName.value,
                     ),
                     keyboardType: TextInputType.name,
-                    onChanged: (value) => controller.validateUsername(),
+                    onChanged: (value) => controller.validateName(),
                   ),
                 ),
               ),
@@ -80,7 +80,11 @@ class ProfileEditView extends GetView<ProfileController> {
               const SizedBox(height: 30),
               Obx(
                 () => ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    controller.isLoading.value
+                        ? null
+                        : controller.changeProfile();
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: primary,
                     minimumSize: const Size(double.infinity, 50),

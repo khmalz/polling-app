@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -10,22 +9,22 @@ class RegisterController extends GetxController {
   RxBool isHidePassword = true.obs;
   RxBool isLoading = false.obs;
 
-  final TextEditingController username = TextEditingController();
+  final TextEditingController name = TextEditingController();
   final TextEditingController email = TextEditingController();
   final TextEditingController password = TextEditingController();
-  Rxn<String> errorUsername = Rxn<String>(null);
+  Rxn<String> errorName = Rxn<String>(null);
   Rxn<String> errorEmail = Rxn<String>(null);
   Rxn<String> errorPassword = Rxn<String>(null);
 
-  bool validateUsername() {
+  bool validateName() {
     return validateString(
-      text: username.text,
+      text: name.text,
       minLength: 3,
-      maxLength: 10,
-      errorMessage: errorUsername,
-      emptyMessage: 'Username cannot be empty',
-      minLengthMessage: 'Username must be at least 3 characters',
-      maxLengthMessage: 'Username must be at most 10 characters',
+      maxLength: 100,
+      errorMessage: errorName,
+      emptyMessage: 'Name cannot be empty',
+      minLengthMessage: 'Name must be at least 3 characters',
+      maxLengthMessage: 'Name must be at most 100 characters',
     );
   }
 
@@ -35,7 +34,7 @@ class RegisterController extends GetxController {
       minLength: 10,
       errorMessage: errorEmail,
       emptyMessage: 'Email cannot be empty',
-      minLengthMessage: 'Email must be at least 3 characters',
+      minLengthMessage: 'Email must be at least 10 characters',
     );
   }
 
@@ -49,35 +48,9 @@ class RegisterController extends GetxController {
     );
   }
 
-  Future<void> createUser(String userId) async {
-    bool isValid = true;
-    isValid &= validateUsername();
-    isValid &= validateEmail();
-    isValid &= validatePassword();
-
-    if (!isValid) return;
-    isLoading.value = true;
-
-    FirebaseFirestore firestore = FirebaseFirestore.instance;
-
-    firestore.collection('users').doc(userId).set({
-      'username': username.text.trim(),
-      'email': email.text.trim(),
-    }).then((value) {
-      debugPrint("User added successfully");
-      Get.offAllNamed(Routes.HOME);
-    }).catchError((error) {
-      debugPrint("Failed to add user: $error");
-
-      snackbarNotification(message: error.toString());
-    });
-
-    isLoading.value = false;
-  }
-
   Future<void> signUp() async {
     bool isValid = true;
-    isValid &= validateUsername();
+    isValid &= validateName();
     isValid &= validateEmail();
     isValid &= validatePassword();
 
@@ -93,7 +66,8 @@ class RegisterController extends GetxController {
         password: password.text.trim(),
       );
 
-      return await createUser(result.user!.uid);
+      await result.user!.updateProfile(displayName: name.text.trim());
+      await result.user!.reload();
     } on FirebaseAuthException catch (error) {
       errorMessage = error.code;
       debugPrint(error.code);
@@ -119,8 +93,8 @@ class RegisterController extends GetxController {
       }
 
       snackbarNotification(message: errorMessage);
+    } finally {
+      isLoading.value = false;
     }
-
-    isLoading.value = false;
   }
 }

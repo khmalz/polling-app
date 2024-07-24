@@ -8,28 +8,23 @@ import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 import '../controllers/home_controller.dart';
 
 class HomeView extends GetView<HomeController> {
-  final int initialIndex;
-
-  const HomeView({super.key, this.initialIndex = 0});
+  const HomeView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    controller.setInitialIndex(initialIndex);
-
-    var listPage = <Widget>[
-      const TimelineView(),
-      const TimelineView(),
-      const ProfileView(),
-    ];
-
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(0),
-        child: AppBar(
-          automaticallyImplyLeading: false,
-        ),
-      ),
-      body: Obx(() => listPage[controller.currentIndex.value]),
+      body: Obx(() {
+        switch (controller.currentIndex.value) {
+          case 0:
+            return const TimelineView();
+          case 1:
+            return const TimelineView();
+          case 2:
+            return const ProfileView();
+          default:
+            return const TimelineView();
+        }
+      }),
       bottomNavigationBar: Obx(
         () => SalomonBottomBar(
           margin: const EdgeInsets.symmetric(horizontal: 40, vertical: 10),
