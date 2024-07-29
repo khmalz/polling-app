@@ -42,6 +42,7 @@ class PostView extends GetView<PostController> {
                     decoration: const InputDecoration(
                       border: InputBorder.none,
                       hintText: 'Enter your post description here...',
+                      filled: true,
                     ),
                   ),
                 ),

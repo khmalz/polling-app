@@ -1,22 +1,18 @@
-import 'package:firebase_app_check/firebase_app_check.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:polling_app/app/data/helper/snackbar_notification.dart';
 import 'dart:io';
+
+import 'package:polling_app/app/routes/app_pages.dart';
 
 class PostController extends GetxController {
   var imageFile = Rx<File?>(null);
   var isLoading = false.obs;
   final picker = ImagePicker();
   TextEditingController description = TextEditingController();
-
-  @override
-  void onInit() async {
-    String token = await FirebaseAppCheck.instance.getToken() ?? "";
-    debugPrint(token);
-    super.onInit();
-  }
 
   Future<void> pickImage() async {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
@@ -31,7 +27,6 @@ class PostController extends GetxController {
   Future<String?> uploadImage() async {
     if (imageFile.value != null) {
       try {
-        isLoading.value = true;
         String fileName = 'posts/${DateTime.now().millisecondsSinceEpoch}.png';
         UploadTask uploadTask = FirebaseStorage.instance
             .ref()
@@ -43,35 +38,49 @@ class PostController extends GetxController {
 
         debugPrint(
             'Image uploaded SUCCESSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS: $imageUrl');
-        isLoading.value = false;
         return imageUrl;
       } catch (e) {
         debugPrint('Error uploading image: $e');
+        snackbarNotification(message: 'Failed to upload image');
         isLoading.value = false;
         return null;
       }
     } else {
-      debugPrint('No image to upload');
+      snackbarNotification(message: 'Please select an image');
       return null;
     }
   }
 
   Future<void> createPost() async {
     if (description.text.isNotEmpty) {
-      String? imageUrl = await uploadImage();
+      isLoading.value = true;
+      try {
+        String? imageUrl = await uploadImage();
 
-      if (imageUrl != null) {
-        debugPrint(
-            'Post created with image SUCCESSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS: $imageUrl');
-      } else {
-        debugPrint('Post created without image');
+        await FirebaseFirestore.instance.collection('posts').add({
+          'description': description.text,
+          'image_url': imageUrl,
+          'createdAt': DateTime.now().toIso8601String(),
+          'updatedAt': DateTime.now().toIso8601String(),
+        });
+
+        Get.offAllNamed(Routes.HOME);
+
+        snackbarNotification(
+          message: 'Post created successfully',
+          backgroundColor: Colors.green,
+        );
+
+        // Reset form
+        description.clear;
+        imageFile.value = null;
+      } catch (e) {
+        snackbarNotification(message: 'Failed to create post: $e');
+      } finally {
+        isLoading.value = false;
       }
-
-      // Reset the post creation state
-      imageFile.value = null;
-      description.clear();
     } else {
-      debugPrint('Please provide a description');
+      snackbarNotification(message: 'Please provide a description');
     }
   }
 }
