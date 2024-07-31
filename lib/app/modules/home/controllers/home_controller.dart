@@ -19,27 +19,23 @@ class HomeController extends GetxController {
 
   void initController(int index) {
     if (index == 0) {
-      if (!Get.isRegistered<TimelineController>()) {
-        Get.put(TimelineController());
-      }
+      Get.put(TimelineController());
     } else if (index == 1) {
-      if (!Get.isRegistered<PostController>()) {
-        Get.put(PostController());
-      }
+      Get.put(PostController());
     } else if (index == 2) {
-      if (!Get.isRegistered<ProfileController>()) {
-        Get.put(ProfileController());
-      }
+      Get.put(ProfileController());
     }
   }
 
   void onTabChanged(int index) {
     if (currentIndex.value != index) {
-      if (currentIndex.value == 0) {
+      if (currentIndex.value == 0 && Get.isRegistered<TimelineController>()) {
         Get.delete<TimelineController>(force: true);
-      } else if (currentIndex.value == 1) {
+      } else if (currentIndex.value == 1 &&
+          Get.isRegistered<PostController>()) {
         Get.delete<PostController>(force: true);
-      } else if (currentIndex.value == 2) {
+      } else if (currentIndex.value == 2 &&
+          Get.isRegistered<ProfileController>()) {
         Get.delete<ProfileController>(force: true);
       }
       initController(index);

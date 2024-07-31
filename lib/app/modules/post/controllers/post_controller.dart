@@ -59,7 +59,7 @@ class PostController extends GetxController {
 
         await FirebaseFirestore.instance.collection('posts').add({
           'description': description.text,
-          'image_url': imageUrl,
+          'imageUrl': imageUrl,
           'createdAt': DateTime.now().toIso8601String(),
           'updatedAt': DateTime.now().toIso8601String(),
         });

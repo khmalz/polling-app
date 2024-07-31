@@ -5,8 +5,6 @@ import '../controllers/timeline_controller.dart';
 class TimelineBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<TimelineController>(
-      () => TimelineController(),
-    );
+    Get.put(TimelineController());
   }
 }
