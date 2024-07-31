@@ -13,6 +13,8 @@ class HomeView extends GetView<HomeController> {
 
   @override
   Widget build(BuildContext context) {
+    Get.put(HomeController());
+
     return Scaffold(
       body: Obx(() {
         switch (controller.currentIndex.value) {

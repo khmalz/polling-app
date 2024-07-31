@@ -8,6 +8,8 @@ class TimelineView extends GetView<TimelineController> {
 
   @override
   Widget build(BuildContext context) {
+    Get.put(TimelineController());
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Timeline'),
@@ -23,7 +25,7 @@ class TimelineView extends GetView<TimelineController> {
           } else {
             return Obx(() {
               if (controller.actions.isEmpty && controller.posts.isEmpty) {
-                return const Center(child: CircularProgressIndicator());
+                return const Center(child: Text('No data available'));
               }
 
               return ListView.builder(
@@ -53,12 +55,20 @@ class TimelineView extends GetView<TimelineController> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
+                          post.userName ?? 'Guest',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.grey[900],
+                          ),
+                        ),
+                        Text(
                           diffForHuman(post.createdAt ?? ''),
                           style: TextStyle(
                             fontSize: 14,
                             color: Colors.grey[700],
                           ),
                         ),
+                        const SizedBox(height: 10),
                         Text(
                           post.description ?? 'No Description',
                           style: const TextStyle(fontSize: 16),
@@ -85,25 +95,46 @@ class TimelineView extends GetView<TimelineController> {
                           ),
                         const SizedBox(height: 10),
                         Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            IconButton(
-                              onPressed: () {
-                                controller.likePost(post.id ?? '');
-                              },
-                              icon: Icon(
-                                Icons.thumb_up,
-                                color: isLiked ? Colors.blue : Colors.grey,
-                              ),
+                            Row(
+                              children: [
+                                IconButton(
+                                  onPressed: () {
+                                    controller.likePost(post.id ?? '');
+                                  },
+                                  icon: Icon(
+                                    Icons.thumb_up,
+                                    color: isLiked ? Colors.blue : Colors.grey,
+                                  ),
+                                ),
+                                IconButton(
+                                  onPressed: () {
+                                    controller.unlikePost(post.id ?? '');
+                                  },
+                                  icon: Icon(
+                                    Icons.thumb_down,
+                                    color:
+                                        isUnliked ? Colors.blue : Colors.grey,
+                                  ),
+                                ),
+                              ],
                             ),
-                            IconButton(
-                              onPressed: () {
-                                controller.unlikePost(post.id ?? '');
-                              },
-                              icon: Icon(
-                                Icons.thumb_down,
-                                color: isUnliked ? Colors.blue : Colors.grey,
+                            Row(children: [
+                              const Icon(
+                                Icons.star,
+                                color: Colors.grey,
+                                size: 20,
                               ),
-                            ),
+                              const SizedBox(width: 4),
+                              Text(
+                                '${post.votePercentage ?? 0}% Up-Likes',
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ])
                           ],
                         ),
                       ],

@@ -24,13 +24,47 @@ class TimelineController extends GetxController {
           .orderBy('createdAt', descending: true)
           .get();
 
-      var postData = snapshot.docs
-          .map(
-              (doc) => Post.fromMap(doc.data() as Map<String, dynamic>, doc.id))
-          .toList();
+      var postData = await Future.wait(snapshot.docs.map((doc) async {
+        var post = Post.fromMap(doc.data() as Map<String, dynamic>, doc.id);
+        post.votePercentage = await calculateLikePercentage(doc.id);
+        return post;
+      }).toList());
+
       posts.assignAll(postData);
+      debugPrint(posts.toString());
     } catch (e) {
       debugPrint('Error fetching posts: $e');
+    }
+  }
+
+  Future<double> calculateLikePercentage(String postId) async {
+    try {
+      QuerySnapshot snapshot = await FirebaseFirestore.instance
+          .collection('actions')
+          .where('postId', isEqualTo: postId)
+          .get();
+
+      int likeCount = 0;
+      int unlikeCount = 0;
+
+      for (var doc in snapshot.docs) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        if (data['isLiked'] == true) {
+          likeCount++;
+        } else if (data['isUnliked'] == true) {
+          unlikeCount++;
+        }
+      }
+
+      int totalActions = likeCount + unlikeCount;
+      if (totalActions == 0) {
+        return 0.0;
+      } else {
+        return (likeCount / totalActions) * 100;
+      }
+    } catch (e) {
+      debugPrint('Error calculating like percentage: $e');
+      return 0.0;
     }
   }
 
@@ -81,8 +115,7 @@ class TimelineController extends GetxController {
 
         if (existingActionQuery.docs.isNotEmpty) {
           var existingActionDoc = existingActionQuery.docs.first;
-          var existingActionData =
-              existingActionDoc.data();
+          var existingActionData = existingActionDoc.data();
 
           if ((isLiked && existingActionData['isLiked'] != true) ||
               (isUnliked && existingActionData['isUnliked'] != true)) {
@@ -97,7 +130,7 @@ class TimelineController extends GetxController {
         }
       });
 
-      await fetchActions();
+      await fetchData();
       update();
       debugPrint(actions.toString());
     } catch (e) {

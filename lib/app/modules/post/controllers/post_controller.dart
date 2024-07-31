@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -12,6 +13,7 @@ class PostController extends GetxController {
   var imageFile = Rx<File?>(null);
   var isLoading = false.obs;
   final picker = ImagePicker();
+  User? user = FirebaseAuth.instance.currentUser;
   TextEditingController description = TextEditingController();
 
   Future<void> pickImage() async {
@@ -58,6 +60,8 @@ class PostController extends GetxController {
         String? imageUrl = await uploadImage();
 
         await FirebaseFirestore.instance.collection('posts').add({
+          'userId': user?.uid,
+          'userName': user?.displayName,
           'description': description.text,
           'imageUrl': imageUrl,
           'createdAt': DateTime.now().toIso8601String(),
