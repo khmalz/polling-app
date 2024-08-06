@@ -19,26 +19,16 @@ class HomeController extends GetxController {
 
   void initController(int index) {
     if (index == 0) {
-      Get.put(TimelineController());
+      Get.lazyPut(() => TimelineController(), fenix: true);
     } else if (index == 1) {
-      Get.put(PostController());
+      Get.lazyPut(() => PostController(), fenix: true);
     } else if (index == 2) {
-      Get.put(ProfileController());
+      Get.lazyPut(() => ProfileController(), fenix: true);
     }
   }
 
   void onTabChanged(int index) {
-    if (currentIndex.value != index) {
-      if (currentIndex.value == 0) {
-        Get.delete<TimelineController>();
-      } else if (currentIndex.value == 1) {
-        Get.delete<PostController>();
-      } else if (currentIndex.value == 2) {
-        Get.delete<ProfileController>();
-      }
-      initController(index);
-    }
-
     currentIndex.value = index;
+    initController(index);
   }
 }

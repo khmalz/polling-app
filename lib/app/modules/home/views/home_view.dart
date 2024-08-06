@@ -13,7 +13,7 @@ class HomeView extends GetView<HomeController> {
 
   @override
   Widget build(BuildContext context) {
-    Get.put(HomeController());
+    Get.lazyPut(() => HomeController(), fenix: true);
 
     return Scaffold(
       body: Obx(() {
@@ -38,7 +38,7 @@ class HomeView extends GetView<HomeController> {
             /// Home
             SalomonBottomBarItem(
               icon: const Icon(Icons.home),
-              title: const Text("Home"),
+              title: const Text("Timeline"),
               selectedColor: Colors.purple,
             ),
 

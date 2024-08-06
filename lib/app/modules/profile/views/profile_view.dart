@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:polling_app/app/data/constant/color.dart';
 import 'package:polling_app/app/data/helper/modal.dart';
+import 'package:polling_app/app/modules/post/bindings/post_binding.dart';
+import 'package:polling_app/app/modules/post/views/user_post_view.dart';
 import '../controllers/profile_controller.dart';
 import 'profile_edit_view.dart';
 
@@ -71,6 +73,28 @@ class ProfileView extends GetView<ProfileController> {
                           color: textPrimary,
                           height: 20,
                           thickness: 1,
+                        ),
+                        const SizedBox(height: 20),
+                        ListTile(
+                          // onTap: controller.logout,
+                          onTap: () {
+                            Get.to(
+                              () => const UserPostView(),
+                              binding: PostBinding(),
+                            );
+                          },
+                          leading: const Icon(
+                            Icons.photo_size_select_actual_outlined,
+                            color: textPrimary,
+                            size: 30,
+                          ),
+                          title: const Text(
+                            "My Post",
+                            style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 20,
+                            ),
+                          ),
                         ),
                         const SizedBox(height: 20),
                         ListTile(
